@@ -1,4 +1,5 @@
 #pragma once
+#include "matrix.hpp"
 
 template <typename T>
 class algebra::Matrix {
@@ -9,6 +10,15 @@ public:
     Matrix() = default;
     Matrix(const int row, const int column, const T& value = T()) : row(row), column(column), matrix(std::vector(row, std::vector(column, value))) {}
     Matrix(const std::vector<std::vector<T>>& matrix) : row(matrix.size()), column(matrix[0].size()), matrix(matrix) {}
+
+    template <typename U>
+    Matrix(const Matrix<U>& other) : Matrix(other.row, other.column) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                matrix[i][j] = static_cast<T>(other[i, j]);
+            }
+        }
+    }
 
     T determinant() const {
         assert(row == column);
@@ -104,7 +114,8 @@ public:
         return res;
     }
 
-    Matrix& operator+=(const Matrix& other) {
+    template <typename U>
+    Matrix& operator+=(const Matrix<U>& other) {
         assert(row == other.row && column == other.column);
 
         for (int i = 0; i < row; i++) {
@@ -115,13 +126,16 @@ public:
         return *this;
     }
 
-    Matrix operator+(const Matrix& other) {
-        Matrix res = *this;
+    template <typename U, typename R = decltype(T() + U())>
+    Matrix<R> operator+(const Matrix<U>& other) const {
+        Matrix<R> res = *this;
         res += other;
         return res;
     }
 
-    Matrix& operator+=(const T& other) {
+    template <typename U>
+    requires (!std::is_same_v<U, Matrix>)
+    Matrix& operator+=(const U& other) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 this->matrix[i][j] += other;
@@ -130,13 +144,15 @@ public:
         return *this;
     }
 
-    Matrix operator+(const T& other) {
-        Matrix res = *this;
+    template <typename U, typename R = decltype(T() + U())>
+    Matrix<R> operator+(const U& other) const {
+        Matrix<R> res = *this;
         res += other;
         return res;
     }
 
-    Matrix& operator-=(const Matrix& other) {
+    template <typename U>
+    Matrix& operator-=(const Matrix<U>& other) {
         assert(row == other.row && column == other.column);
 
         for (int i = 0; i < row; i++) {
@@ -147,13 +163,16 @@ public:
         return *this;
     }
 
-    Matrix operator-(const Matrix& other) {
-        Matrix res = *this;
+    template <typename U, typename R = decltype(T() - U())>
+    Matrix<R> operator-(const Matrix<U>& other) const {
+        Matrix<R> res = *this;
         res -= other;
         return res;
     }
 
-    Matrix& operator-=(const T& other) {
+    template <typename U>
+    requires (!std::is_same_v<U, Matrix>)
+    Matrix& operator-=(const U& other) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 this->matrix[i][j] -= other;
@@ -162,20 +181,23 @@ public:
         return *this;
     }
 
-    Matrix operator-(const T& other) {
-        Matrix res = *this;
+    template <typename U, typename R = decltype(T() - U())>
+    Matrix<R> operator-(const U& other) const {
+        Matrix<R> res = *this;
         res -= other;
         return res;
     }
 
-    Matrix& operator*=(const Matrix& other) {
+    template <typename U>
+    Matrix& operator*=(const Matrix<U>& other) {
         *this = *this * other;
         return *this;
     }
 
-    Matrix operator*(const Matrix& other) {
+    template <typename U, typename R = decltype(T() * U() + T() * U())>
+    Matrix<R> operator*(const Matrix<U>& other) const {
         assert(column == other.row);
-        Matrix res(row, other.column);
+        Matrix<R> res(row, other.column);
 
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < other.column; j++) {
@@ -187,7 +209,9 @@ public:
         return res;
     }
 
-    Matrix& operator*=(const T& other) {
+    template <typename U>
+    requires (!std::is_same_v<U, Matrix>)
+    Matrix& operator*=(const U& other) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 this->matrix[i][j] *= other;
@@ -196,13 +220,16 @@ public:
         return *this;
     }
 
-    Matrix operator*(const T& other) {
-        Matrix res = *this;
+    template <typename U, typename R = decltype(T() * U())>
+    Matrix<R> operator*(const U& other) const {
+        Matrix<R> res = *this;
         res *= other;
         return res;
     }
 
-    Matrix& operator/=(const T& other) {
+    template <typename U>
+    requires (!std::is_same_v<U, Matrix>)
+    Matrix& operator/=(const U& other) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 this->matrix[i][j] /= other;
@@ -211,8 +238,9 @@ public:
         return *this;
     }
 
-    Matrix operator/(const T& other) {
-        Matrix res = *this;
+    template <typename U, typename R = decltype(T() / U(1))>
+    Matrix<R> operator/(const U& other) const {
+        Matrix<R> res = *this;
         res /= other;
         return res;
     }
