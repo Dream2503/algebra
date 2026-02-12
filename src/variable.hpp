@@ -125,7 +125,7 @@ public:
         if (is_const != value_const) {
             return is_const ? std::strong_ordering::greater : std::strong_ordering::less;
         }
-        return std::tie(variables, coefficient) <=> std::tie(variables, value.coefficient);
+        return std::tie(variables, coefficient) <=> std::tie(value.variables, value.coefficient);
     }
 
     constexpr bool operator==(const Variable&) const = default;

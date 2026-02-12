@@ -43,9 +43,7 @@ public:
         });
 
         if (itr != expression.end() && itr->variables == value.variables) {
-            if ((itr->coefficient += value.coefficient) == 0) {
-                expression.erase(itr);
-            }
+            itr->coefficient += value.coefficient;
         } else {
             expression.insert(itr, value);
         }
@@ -133,8 +131,8 @@ public:
 
     Fraction complete_substitution();
 
-    constexpr explicit operator Fraction() const {
-        assert(expression.size() == 1 && expression[0].variables.empty());
+    explicit operator Fraction() const {
+        assert(expression.size() == 1);
         return static_cast<Fraction>(expression[0]);
     }
 
