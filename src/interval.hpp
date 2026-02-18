@@ -9,10 +9,6 @@ public:
     constexpr Interval() = default;
 
     Interval(const Inequation& lhs, const RelationalOperator opr, const Polynomial& rhs) : lhs(lhs), opr(opr), rhs(rhs) {}
-
-    friend std::ostream& operator<<(std::ostream& out, const Interval& interval) {
-        return out << interval.lhs << ' ' << interval.opr << interval.rhs;
-    }
 };
 
 inline algebra::Interval operator<(const algebra::Inequation& lhs, const algebra::Fraction& rhs) {
@@ -104,3 +100,13 @@ inline algebra::Interval operator>(const algebra::Polynomial& lhs, const algebra
 inline algebra::Interval operator>=(const algebra::Polynomial& lhs, const algebra::Inequation& rhs) { return rhs <= lhs; }
 
 inline algebra::Interval operator==(const algebra::Polynomial& lhs, const algebra::Inequation& rhs) { return rhs == lhs; }
+
+namespace std {
+    inline string to_string(const algebra::Interval& interval) {
+        string res = to_string(interval.lhs);
+        res.push_back(' ');
+        return res.append(to_string(interval.opr)).append(to_string(interval.rhs));
+    }
+} // namespace std
+
+inline std::ostream& algebra::operator<<(std::ostream& out, const Interval& interval) { return out << std::to_string(interval); }

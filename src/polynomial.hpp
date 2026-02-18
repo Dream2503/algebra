@@ -41,6 +41,11 @@ public:
 
         if (itr != expression.end() && itr->variables == value.variables) {
             itr->coefficient += value.coefficient;
+
+            if (itr->coefficient == 0) {
+                expression.erase(itr);
+                *this += 0;
+            }
         } else {
             expression.insert(itr, value);
         }
@@ -166,17 +171,6 @@ public:
         assert(expression.size() == 1);
         return expression[0];
     }
-
-    friend std::ostream& operator<<(std::ostream& out, const Polynomial& polynomial) {
-        if (!polynomial.expression.empty()) {
-            out << polynomial.expression.front();
-
-            for (const Variable& variable : polynomial.expression | std::views::drop(1)) {
-                out << (variable.coefficient < Fraction() ? " - " : " + ") << std::abs(variable);
-            }
-        }
-        return out;
-    }
 };
 
 inline algebra::Polynomial operator+(const algebra::Variable& lhs, const algebra::Variable& rhs) { return algebra::Polynomial(lhs) + rhs; }
@@ -190,3 +184,20 @@ inline algebra::Polynomial operator-(const algebra::Variable& lhs, const algebra
 inline algebra::Polynomial operator-(const algebra::Variable& lhs, const algebra::Fraction& rhs) { return algebra::Polynomial(lhs) - rhs; }
 
 inline algebra::Polynomial operator-(const algebra::Fraction& lhs, const algebra::Variable& rhs) { return algebra::Polynomial(lhs) - rhs; }
+
+namespace std {
+    inline string to_string(const algebra::Polynomial& polynomial) {
+        string res;
+
+        if (!polynomial.expression.empty()) {
+            res.append(to_string(polynomial.expression.front()));
+
+            for (const algebra::Variable& variable : polynomial.expression | std::views::drop(1)) {
+                res.append(variable.coefficient < 0 ? " - " : " + ").append(to_string(abs(variable)));
+            }
+        }
+        return res;
+    }
+} // namespace std
+
+inline std::ostream& algebra::operator<<(std::ostream& out, const Polynomial& polynomial) { return out << std::to_string(polynomial); }

@@ -85,10 +85,6 @@ public:
         inequation /= value;
         return inequation;
     }
-
-    friend std::ostream& operator<<(std::ostream& out, const Inequation& inequation) {
-        return out << inequation.lhs << ' ' << inequation.opr << ' ' << inequation.rhs;
-    }
 };
 
 class algebra::Equation : public Inequation {
@@ -215,3 +211,14 @@ inline algebra::Inequation operator>=(const algebra::Polynomial& lhs, const alge
 }
 
 inline algebra::Equation operator==(const algebra::Polynomial& lhs, const algebra::Polynomial& rhs) { return algebra::Equation(lhs, rhs); }
+
+namespace std {
+    inline string to_string(const algebra::Inequation& inequation) {
+        string res = to_string(inequation.lhs);
+        res.push_back(' ');
+        res.append(to_string(inequation.opr)).push_back(' ');
+        return res.append(to_string(inequation.rhs));
+    }
+} // namespace std
+
+inline std::ostream& algebra::operator<<(std::ostream& out, const Inequation& inequation) { return out << std::to_string(inequation); }
