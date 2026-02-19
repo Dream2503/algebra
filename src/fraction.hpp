@@ -120,6 +120,9 @@ namespace std {
         if (fraction == inf) {
             return "inf";
         }
+        if (fraction == -inf) {
+            return "-inf";
+        }
         std::string res = std::to_string(fraction.numerator);
 
         if (fraction.denominator != 1) {
