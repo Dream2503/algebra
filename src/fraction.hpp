@@ -96,7 +96,7 @@ public:
     }
 
     constexpr std::strong_ordering operator<=>(const Fraction& value) const {
-        return numerator * value.denominator <=> value.numerator * denominator;
+        return static_cast<int64_t>(numerator) * value.denominator <=> static_cast<int64_t>(value.numerator) * denominator;
     }
 
     constexpr std::partial_ordering operator<=>(const double value) const { return static_cast<double>(*this) <=> value; }
