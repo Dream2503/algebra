@@ -46,10 +46,7 @@ public:
         return fraction;
     }
 
-    constexpr Fraction& operator-=(const Fraction& value) {
-        *this += -value;
-        return *this;
-    }
+    constexpr Fraction& operator-=(const Fraction& value) { return *this += -value; }
 
     constexpr Fraction operator-(const Fraction& value) const {
         Fraction fraction = *this;
@@ -85,8 +82,7 @@ public:
 
     constexpr Fraction& operator^=(const Fraction& value) {
         const double exponent = static_cast<double>(value);
-        *this = Fraction(std::pow(numerator, exponent)) / Fraction(std::pow(denominator, exponent));
-        return *this;
+        return *this = Fraction(std::pow(numerator, exponent)) / Fraction(std::pow(denominator, exponent));
     }
 
     constexpr Fraction operator^(const Fraction& value) const {

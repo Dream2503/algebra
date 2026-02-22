@@ -26,16 +26,9 @@ public:
         return res;
     }
 
-    Variable& operator*=(const Fraction& value) {
-        this->coefficient *= value;
-        return *this;
-    }
+    Variable& operator*=(const Fraction& value) { return *this *= Variable(value); }
 
-    Variable operator*(const Fraction& value) const {
-        Variable res = *this;
-        res *= value;
-        return res;
-    }
+    Variable operator*(const Fraction& value) const { return *this * Variable(value); }
 
     Variable& operator*=(const Variable& value) {
         coefficient *= value.coefficient;
@@ -60,16 +53,9 @@ public:
         return res;
     }
 
-    Variable& operator/=(const Fraction& value) {
-        this->coefficient /= value;
-        return *this;
-    }
+    Variable& operator/=(const Fraction& value) { return *this /= Variable(value); }
 
-    Variable operator/(const Fraction& value) const {
-        Variable res = *this;
-        res /= value;
-        return res;
-    }
+    Variable operator/(const Fraction& value) const { return *this / Variable(value); }
 
     Variable& operator/=(const Variable& value) {
         coefficient /= value.coefficient;
@@ -110,8 +96,7 @@ public:
     }
 
     constexpr std::strong_ordering operator<=>(const Variable& value) const {
-        const bool is_const = this->variables.empty();
-        const bool value_const = value.variables.empty();
+        const bool is_const = variables.empty(), value_const = value.variables.empty();
 
         if (is_const != value_const) {
             return is_const ? std::strong_ordering::greater : std::strong_ordering::less;
@@ -121,9 +106,19 @@ public:
 
     constexpr bool operator==(const Variable&) const = default;
 
-    Variable partial_substitution();
+    Variable substitute(const std::vector<std::pair<std::string, Fraction>>& values) const {
+        Variable res = *this;
 
-    Fraction complete_substitution();
+        for (const auto& [name, value] : values) {
+            const auto itr = std::ranges::lower_bound(res.variables, name, {}, &Var::name);
+
+            if (itr != res.variables.end()) {
+                res.coefficient *= value ^ itr->exponent;
+                res.variables.erase(itr);
+            }
+        }
+        return res;
+    }
 
     Variable basis() const {
         Variable res = *this;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <numeric>
 #include <ranges>
+#include <utility>
 #include <vector>
 
 namespace algebra {
@@ -12,13 +13,17 @@ namespace algebra {
 
     class Fraction;
     std::ostream& operator<<(std::ostream&, const Fraction&);
+
     class Variable;
     std::ostream& operator<<(std::ostream&, const Variable&);
+
     class Polynomial;
     std::ostream& operator<<(std::ostream&, const Polynomial&);
+
     class Inequation;
     class Equation;
     std::ostream& operator<<(std::ostream&, const Inequation&);
+
     class Interval;
     std::ostream& operator<<(std::ostream&, const Interval&);
 
@@ -27,6 +32,7 @@ namespace algebra {
 
     namespace detail {
         RelationalOperator invert_relational_operator(RelationalOperator);
+        bool evaluate_relational_operator(const Fraction&, RelationalOperator, const Fraction&);
     } // namespace detail
 } // namespace algebra
 
