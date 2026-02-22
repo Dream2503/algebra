@@ -68,6 +68,8 @@ public:
         return res;
     }
 
+    bool is_bool() const { return lhs.is_fraction() && rhs.is_fraction(); }
+
     explicit operator bool() const { return detail::evaluate_relational_operator(static_cast<Fraction>(lhs), opr, static_cast<Fraction>(rhs)); }
 };
 

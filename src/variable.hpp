@@ -130,8 +130,10 @@ public:
         return res;
     }
 
+    bool is_fraction() const { return variables.empty(); }
+
     constexpr explicit operator Fraction() const {
-        assert(variables.empty());
+        assert(is_fraction());
         return coefficient;
     }
 };

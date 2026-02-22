@@ -81,8 +81,10 @@ public:
     Polynomial operator*(const Variable& value) const { return *this * Polynomial(value); }
 
     Polynomial& operator*=(const Polynomial& value) {
-        for (const Variable& variable : value.expression) {
-            *this *= variable;
+        for (Variable& lhs : expression) {
+            for (const Variable& rhs : value.expression) {
+                lhs *= rhs;
+            }
         }
         return *this;
     }
@@ -119,10 +121,14 @@ public:
         return res;
     }
 
+    bool is_fraction() const { return is_variable() && expression[0].is_fraction(); };
+
+    bool is_variable() const { return expression.size() == 1; }
+
     explicit operator Fraction() const { return static_cast<Fraction>(static_cast<Variable>(*this)); }
 
     explicit operator Variable() const {
-        assert(expression.size() == 1);
+        assert(is_variable());
         return expression[0];
     }
 };
