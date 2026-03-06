@@ -13,12 +13,12 @@ class algebra::Variable {
     };
 
 public:
-    Fraction coefficient = 1;
+    Fraction coefficient;
     std::vector<Var> variables;
 
     Variable() = default;
 
-    Variable(const std::string& name) : variables({{name, 1}}) {}
+    Variable(const std::string& name) : coefficient(1), variables({{name, 1}}) {}
 
     Variable(const Fraction& coefficient) : coefficient(coefficient) {}
 
@@ -114,7 +114,7 @@ public:
         for (const auto& [name, value] : values) {
             const auto itr = std::ranges::lower_bound(res.variables, name, {}, &Var::name);
 
-            if (itr != res.variables.end()) {
+            if (itr != res.variables.end() && itr->name == name) {
                 res.coefficient *= value ^ itr->exponent;
                 res.variables.erase(itr);
             }

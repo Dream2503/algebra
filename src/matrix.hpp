@@ -3,9 +3,6 @@
 
 template <typename T>
 class algebra::Matrix {
-    std::vector<T>& operator[](const int i) { return matrix[i]; }
-
-    T& operator[](const int i, const int j) { return matrix[i][j]; }
 
 public:
     int row, column;
@@ -255,7 +252,11 @@ public:
 
     bool operator==(const Matrix& other) const { return matrix == other.matrix; }
 
+    std::vector<T>& operator[](const int i) { return matrix[i]; }
+
     const std::vector<T>& operator[](const int i) const { return matrix[i]; }
+
+    T& operator[](const int i, const int j) { return matrix[i][j]; }
 
     const T& operator[](const int i, const int j) const { return matrix[i][j]; }
 };
@@ -269,8 +270,8 @@ namespace std {
 
         for (int i = 0; i < matrix.row; i++) {
             for (int j = 0; j < matrix.column; j++) {
-                format.matrix[i][j] = std::to_string(matrix[i, j]);
-                padding = std::max(padding, static_cast<int>(format.matrix[i][j].size()) + 2);
+                format[i, j] = std::to_string(matrix[i, j]);
+                padding = std::max(padding, static_cast<int>(format[i, j].size()) + 2);
             }
         }
         const std::string border = [&format, padding] -> std::string {
